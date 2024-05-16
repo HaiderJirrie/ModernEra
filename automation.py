@@ -1,4 +1,4 @@
-import sys, os
+import sys, os, pefile
     
 def validatePath():
     if sys.argv.__len__() < 2 :
