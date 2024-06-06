@@ -39,21 +39,40 @@ def static_analysis():
     print("Analysing PE Imports")
 
     pe = pefile.PE(target_path)
-    has_printf = False
+    target_entry = 'msvcrt.dll'
+    found_buffer_overflow_functions = []
+    found_string_format_functions = []
+
+    buffer_overflow_functions = [
+        'strcpy', 'strncpy', 'sprintf', 'vsprintf', 'gets',
+        'scanf', 'fscanf', 'sscanf', 'getenv', 'streadd'
+    ]
+
+    string_format_functions = [
+        'printf', 'fprintf', 'sprintf', 'vfprintf', 'vsprintf'
+    ]
 
     for entry in pe.DIRECTORY_ENTRY_IMPORT:
-        if entry.dll.decode('utf-8').lower() == 'msvcrt.dll':
+        if entry.dll.decode('utf-8').lower() == target_entry:
             print(f"{entry.dll.decode('utf-8')}:")
             for imp in entry.imports:
                 func_name = imp.name.decode('utf-8') if imp.name else str(imp.ordinal)
-                print(f"\t{func_name}")
-                if func_name == 'printf' or func_name == 'fprintf':
-                    has_printf = True
+
+                if func_name in buffer_overflow_functions:
+                    found_buffer_overflow_functions.append(func_name)
+
+                if func_name in string_format_functions:
+                    found_string_format_functions.append(func_name)
+
+    print(f"\tFound {len(found_string_format_functions)} vulnerable string format attack functions \n\t({found_string_format_functions or "None"})")
+    print(f"\tFound {len(found_buffer_overflow_functions)} vulnerable buffer overflow attack functions \n\t({found_buffer_overflow_functions or "None"})")                       
     
-    if has_printf:
+    if len(found_string_format_functions) > 0:
         string_format_attack()
+    elif len(found_buffer_overflow_functions) > 0:
+        print("Potential buffer overflow vulnerability detected.")
     else:
-        print("No printf or fprintf found in imports.")
+        print("No potential vulnerabilities found in imports.")
 
 validate_path()
 change_working_dir()
