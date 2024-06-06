@@ -1,8 +1,11 @@
-import sys, os, subprocess, pefile
+import sys
+import os
+import subprocess
+import pefile
 
 target_path = ''
 
-def validatePath():
+def validate_path():
     global target_path
 
     if len(sys.argv) < 2:
@@ -17,23 +20,22 @@ def validatePath():
 
     print("Target located")
 
-def changeWorkingDir():
-    pe_dir = os.path.dirname(target_path)
-    os.chdir(pe_dir)
+def change_working_dir():
+    target_dir = os.path.dirname(target_path)
+    os.chdir(target_dir)
 
-def stringFormatAttack():
+def string_format_attack():
     print("Attempting string format attack")
     
-    process = subprocess.Popen(f"\"{target_path}\"", stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+    process = subprocess.Popen(f"\"{target_path}\"", stdin=subprocess.PIPE, stdout=subprocess.PIPE, shell=True)
+
     input_str = " ".join(["%p"] * 30) + "\n"
-    output, error = process.communicate(input=input_str.encode())
+    output = process.communicate(input=input_str.encode())
     
     print(output)
-    if error:
-        print(error)
 
 
-def staticAnalysis():
+def static_analysis():
     print("Analysing PE Imports")
 
     pe = pefile.PE(target_path)
@@ -49,10 +51,10 @@ def staticAnalysis():
                     has_printf = True
     
     if has_printf:
-        stringFormatAttack()
+        string_format_attack()
     else:
         print("No printf or fprintf found in imports.")
 
-validatePath()
-changeWorkingDir()
-staticAnalysis()
+validate_path()
+change_working_dir()
+static_analysis()
