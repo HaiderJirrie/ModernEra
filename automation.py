@@ -34,23 +34,25 @@ def string_format_attack():
     
     print(output)
 
+def print_import_analysis_result(functions_list: list, vulnerability_name):
+    print(f"\tFound {len(functions_list)} vulnerable {vulnerability_name} functions \n\t({functions_list or "None"})")
 
-def static_analysis():
+def import_analysis():
     print("Analysing PE Imports")
-
-    pe = pefile.PE(target_path)
-    target_entry = 'msvcrt.dll'
-    found_buffer_overflow_functions = []
-    found_string_format_functions = []
 
     buffer_overflow_functions = [
         'strcpy', 'strncpy', 'sprintf', 'vsprintf', 'gets',
         'scanf', 'fscanf', 'sscanf', 'getenv', 'streadd'
     ]
-
     string_format_functions = [
         'printf', 'fprintf', 'sprintf', 'vfprintf', 'vsprintf'
     ]
+
+    found_buffer_overflow_functions = []
+    found_string_format_functions = []
+
+    pe = pefile.PE(target_path)
+    target_entry = 'msvcrt.dll'
 
     for entry in pe.DIRECTORY_ENTRY_IMPORT:
         if entry.dll.decode('utf-8').lower() == target_entry:
@@ -64,16 +66,25 @@ def static_analysis():
                 if func_name in string_format_functions:
                     found_string_format_functions.append(func_name)
 
-    print(f"\tFound {len(found_string_format_functions)} vulnerable string format attack functions \n\t({found_string_format_functions or "None"})")
-    print(f"\tFound {len(found_buffer_overflow_functions)} vulnerable buffer overflow attack functions \n\t({found_buffer_overflow_functions or "None"})")                       
-    
-    if len(found_string_format_functions) > 0:
-        string_format_attack()
-    elif len(found_buffer_overflow_functions) > 0:
-        print("Potential buffer overflow vulnerability detected.")
-    else:
-        print("No potential vulnerabilities found in imports.")
+    print_import_analysis_result(found_buffer_overflow_functions, "buffer overflow attack")
+    print_import_analysis_result(found_string_format_functions, "string format attack")
 
-validate_path()
-change_working_dir()
-static_analysis()
+    return len(found_buffer_overflow_functions) > 0, len(found_string_format_functions) > 0
+
+def attempt_exploit():
+    buffer_overflow, string_format = import_analysis()
+
+    if string_format:
+        string_format_attack()
+    elif buffer_overflow:
+        print("attempting buffer overflow attack")
+    else:
+        print("no exploit possible")
+
+def main():
+    validate_path()
+    change_working_dir()
+    attempt_exploit()
+
+if __name__ == "__main__":
+    main()
