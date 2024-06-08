@@ -5,7 +5,6 @@ import pefile
 def print_result(functions_list: list, vulnerability_name):
     print(f"\tFound {len(functions_list)} vulnerable {vulnerability_name} functions \n\t({functions_list or "None"})")
 
-#array maken met dezelfde lengte als exploits, ieder index bevat een object/dictionary (?) met daarin een lijst aan gevonden functies
 def analyse_imports(path, exploits : List[Exploit]):
     print("Analysing PE Imports")
 
@@ -24,9 +23,3 @@ def analyse_imports(path, exploits : List[Exploit]):
     for exploit in exploits:
         if len(exploit.found_vulnerable_functions) > 0:
             print_result(exploit.found_vulnerable_functions, exploit.name)
-                        
-                
-
-#we willen hier de gevonden vuln functies bijhouden per exploit -> uitprinten
-
-#de exploit object die gevonden is, terug sturen als possible_exploits
