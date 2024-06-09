@@ -1,3 +1,4 @@
+import sys
 from enum import Enum
 from typing import List
 
@@ -5,22 +6,31 @@ from typing import List
 class Flag(Enum):
     PREFIX = "flag{"
     SUFFIX = "}"
-    BYTES = 4
 
 
-def find_flag_in_list(list: List[str]):
-    flag_found = False
-    flag_index = 0
+def flag_found(flag: str):
+    print(flag)
+    sys.exit()
+
+
+def search_for_flag_in_list(list: List[str]):
     flag = ""
+    flag_prefix_index = None
 
     for index, list_item in enumerate(list):
-        if list_item.find(Flag.PREFIX.value) != -1:
-            flag += list_item
-            flag_index = index
-            flag_found = True
+        if not flag_prefix_index and list_item.find(Flag.PREFIX.value) >= 0:
+            flag_prefix_index = index
 
-        if flag_found and len(list) >= (flag_index + Flag.BYTES.value):
-            remainder = list[flag_index + 1 : flag_index + Flag.BYTES.value]
-            for part in remainder:
-                flag += part
-            return flag
+        last_list_item_index = len(list) - 1
+
+        if flag_prefix_index and flag_prefix_index < last_list_item_index:
+            flag_remainder = list[flag_prefix_index:last_list_item_index]
+
+            for flag_part in flag_remainder:
+                flag += flag_part
+
+            suffix_index = flag.find(Flag.SUFFIX.value)
+
+            if suffix_index >= 0:
+                flag = flag[: suffix_index + 1]
+                flag_found(flag)
