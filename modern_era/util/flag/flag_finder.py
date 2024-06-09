@@ -8,7 +8,7 @@ class Flag(Enum):
     SUFFIX = "}"
 
 
-def flag_found(flag: str):
+def __flag_found(flag: str):
     print(flag)
     sys.exit()
 
@@ -23,7 +23,7 @@ def search_for_flag_in_list(list: List[str]):
 
         last_list_item_index = len(list) - 1
 
-        if flag_prefix_index and flag_prefix_index < last_list_item_index:
+        if flag_prefix_index and flag_prefix_index <= last_list_item_index:
             flag_remainder = list[flag_prefix_index:last_list_item_index]
 
             for flag_part in flag_remainder:
@@ -33,4 +33,4 @@ def search_for_flag_in_list(list: List[str]):
 
             if suffix_index >= 0:
                 flag = flag[: suffix_index + 1]
-                flag_found(flag)
+                __flag_found(flag)
