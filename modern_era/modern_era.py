@@ -2,11 +2,12 @@ from util.validate_path import get_valid_path
 from util.change_directory import change_working_dir
 from analysis.import_analysis import analyse_imports
 from exploits.string_format_attack import StringFormatAttack
+from exploits.buffer_overflow_attack import BufferOverflowAttack
 
 class ModernEra:
     def __init__(self):
         self._path = get_valid_path()
-        self._exploits = [StringFormatAttack()]
+        self._exploits = [StringFormatAttack(), BufferOverflowAttack()]
 
     @property
     def path(self):
