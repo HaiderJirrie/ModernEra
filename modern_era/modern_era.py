@@ -7,7 +7,7 @@ from exploits.buffer_overflow_attack import BufferOverflowAttack
 class ModernEra:
     def __init__(self):
         self._path = get_valid_path()
-        self._exploits = [StringFormatAttack(), BufferOverflowAttack()]
+        self._exploits = [StringFormatAttack(100), BufferOverflowAttack(1000)]
 
     @property
     def path(self):
