@@ -1,1 +1,2 @@
 pefile
+auto-py-to-exe
