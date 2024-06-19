@@ -5,3 +5,4 @@ The aim of this project is to have an automation tool that determines which vuln
 
 This tool is currently capable of:
  - String format attacks
+ - Buffer overflow attack
