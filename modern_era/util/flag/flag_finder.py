@@ -19,11 +19,6 @@ class FlagFinder:
         else:
             return FlagTemplate()
 
-    @staticmethod
-    def __flag_found(flag: str):
-        print(flag)
-        sys.exit()
-
     def search_for_flag_in_text(self, text: str):
         prefix_index = text.find(self.flag_template.prefix)
         
@@ -32,7 +27,7 @@ class FlagFinder:
             
             if suffix_index >= 0:
                 flag = text[prefix_index:suffix_index + len(self.flag_template.suffix)]
-                self.__flag_found(flag)
+                return flag
 
     def search_for_flag_in_list(self, list: List[str]):
         flag_index = None
@@ -56,4 +51,4 @@ class FlagFinder:
 
                 if suffix_index >= 0:
                     flag = flag[prefix_index : suffix_index + 1]
-                    self.__flag_found(flag)
+                    return flag
