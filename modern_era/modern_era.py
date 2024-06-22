@@ -1,8 +1,10 @@
 from util.validate_path import get_valid_path
 from util.change_directory import change_working_dir
 from analysis.import_analysis import analyse_imports
+from analysis.fuzzer import fuz
 from exploits.string_format_attack import StringFormatAttack
 from exploits.buffer_overflow_attack import BufferOverflowAttack
+
 
 class ModernEra:
     def __init__(self):
@@ -24,3 +26,5 @@ class ModernEra:
         for exploit in self.exploits:
             if len(exploit.found_vulnerable_functions) > 0:
                 exploit.attempt_exploit(self.path)
+
+        fuz(self.path)
